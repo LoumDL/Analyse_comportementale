@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: joj-backend
+    runtime: docker
+    rootDir: modele_AI
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    region: frankfurt
+    envVars:
+      - key: PORT
+        value: 8000
