@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: joj-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter          # starter = 512MB RAM, supporte WebSocket
+    region: frankfurt      # plus proche de Dakar
+    envVars:
+      - key: PORT
+        value: 8000
+    disk:
+      name: config
+      mountPath: /app/data
+      sizeGB: 1
