@@ -2,8 +2,7 @@ services:
   - type: web
     name: joj-backend
     runtime: docker
-    dockerContext: modele_AI
-    dockerfilePath: modele_AI/Dockerfile
+    dockerfilePath: ./Dockerfile
     plan: starter
     region: frankfurt
     envVars:
