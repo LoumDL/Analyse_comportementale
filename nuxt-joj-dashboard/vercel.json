@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".output/public",
+  "framework": "nuxtjs",
+  "env": {
+    "NUXT_PUBLIC_API_URL": "@joj_api_url"
+  }
+}

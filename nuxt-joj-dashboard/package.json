@@ -1,0 +1,39 @@
+{
+  "name": "nuxt-joj-dashboard",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@deck.gl/core": "^9.0.0",
+    "@deck.gl/layers": "^9.0.0",
+    "@pinia/nuxt": "^0.5.1",
+    "@vueuse/core": "^10.9.0",
+    "@vueuse/nuxt": "^10.9.0",
+    "echarts": "^5.5.0",
+    "d3": "^7.9.0",
+    "dayjs": "^1.11.10",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
+    "lodash-es": "^4.17.21",
+    "maplibre-gl": "^4.1.2",
+    "nuxt": "^3.11.0",
+    "pinia": "^2.1.7",
+    "socket.io-client": "^4.7.4",
+    "vue": "^3.4.21",
+    "vue-echarts": "^6.7.1",
+    "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.11.4",
+    "@types/d3": "^7.4.3",
+    "@types/lodash-es": "^4.17.12",
+    "nuxt-icon": "^0.6.10",
+    "typescript": "^5.4.3"
+  }
+}
