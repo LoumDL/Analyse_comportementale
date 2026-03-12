@@ -19,7 +19,7 @@ Lancement :
   uvicorn api:app --reload --port 8000
 """
 
-import sys, os, time, threading, uuid, json, base64
+import sys, os, time, threading, uuid, json, base64, asyncio
 from collections import deque
 from datetime import datetime
 from typing import Dict, Generator
@@ -134,8 +134,6 @@ def _emit(event: str, data):
     """Émet un événement Socket.IO depuis le thread d'analyse sans bloquer."""
     if _loop and not _loop.is_closed():
         asyncio.run_coroutine_threadsafe(sio.emit(event, data), _loop)
-
-import asyncio
 
 MESSAGES = {
     "normal":         lambda d: f"Flux normal — {d}",
