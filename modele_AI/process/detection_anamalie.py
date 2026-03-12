@@ -354,7 +354,7 @@ class AnomalyDetector:
 VERT               = "\033[92m"
 RESET              = "\033[0m"
 INTERVALLE_RAPPORT = 30.0   # secondes entre chaque affichage console
-PHONE_STREAM       = "http://192.168.137.228:4747/video"
+PHONE_STREAM       = "http://192.168.2.108:4747/video"
 # PHONE_STREAM     = "video illustration foule.mp4"
 
 
@@ -368,28 +368,50 @@ def analyser_frame(detector: AnomalyDetector, frame,
     Analyse une frame zone par zone (A/B/C/D) en utilisant les données
     réelles de localisation issues de detection_traking.stream_frames().
 
-    Pour chaque zone, construit les tracks correspondants et appelle
-    AnomalyDetector.process_frame(). Les alertes de toutes les zones
-    sont agrégées et retournées.
+    Pour chaque zone, construit les tracks avec vitesse et direction réelles,
+    appelle AnomalyDetector.process_frame(), et génère une alerte "normal"
+    si aucune anomalie n'est détectée dans la zone.
 
     Args:
         detector    : instance d'AnomalyDetector
         frame       : image BGR
         zone_counts : {"A": int, "B": int, "C": int, "D": int}
-        tracks      : [{"id": int, "cx": float, "cy": float, "zone": str}, ...]
+        tracks      : [{"id": int, "cx": float, "cy": float, "zone": str,
+                         "speed": float, "direction": float}, ...]
     Returns:
-        liste d'Alert (toutes zones confondues)
+        liste d'Alert (toutes zones confondues, inclut les zones normales)
     """
     alertes = []
+    now     = datetime.now().isoformat(timespec="seconds")
+
     for zone, count in zone_counts.items():
-        # Sélectionner uniquement les tracks de cette zone
+        # Tracks réels de cette zone avec vitesse + direction calculées
         zone_tracks = [
-            {"id": t["id"], "speed": 0.0, "direction": 0.0}
+            {
+                "id":        t["id"],
+                "speed":     t.get("speed", 0.0),
+                "direction": t.get("direction", 0.0),
+            }
             for t in tracks if t["zone"] == zone
         ]
-        alertes += detector.process_frame(frame, zone=zone,
-                                          tracks=zone_tracks,
-                                          person_count=count)
+
+        zone_alerts = detector.process_frame(frame, zone=zone,
+                                             tracks=zone_tracks,
+                                             person_count=count)
+
+        if zone_alerts:
+            alertes += zone_alerts
+        else:
+            # Cas normal : aucune anomalie détectée dans cette zone
+            alertes.append(Alert(
+                level="info",
+                zone=zone,
+                type_anomalie="normal",
+                timestamp=now,
+                confiance=1.0,
+                detail=f"{count} personne(s) — flux normal",
+            ))
+
     return alertes
 
 

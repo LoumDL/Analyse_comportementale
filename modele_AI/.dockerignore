@@ -1,0 +1,12 @@
+__pycache__
+*.pyc
+*.pyo
+process/__pycache__
+*.mp4
+*.pt
+!yolo26n.pt
+main.py
+test.py
+note.md
+documentation.md
+pyrightconfig.json
