@@ -291,11 +291,22 @@ class AnomalyDetector:
         self.zone_area   = zone_area_m2
         self.frame_skip  = frame_skip
         self.frame_idx   = 0
-        self.pose_model  = YOLO(pose_model_path)
         self.zone_states = {z: ZoneState() for z in ZONES + ["G"]}
         self.prev_speeds = defaultdict(float)
-        self.last_pose_results: dict = {z: [] for z in ZONES + ["G"]}  # cache pose par zone
-        print(f"[INFO] YOLO-Pose chargé : '{pose_model_path}'")
+        self.last_pose_results: dict = {z: [] for z in ZONES + ["G"]}
+
+        # Chargement modèle pose (fallback yolo11n-pose.pt si fichier absent)
+        self.pose_model = None
+        candidates = [pose_model_path, "yolo11n-pose.pt"]
+        for candidate in candidates:
+            try:
+                self.pose_model = YOLO(candidate)
+                print(f"[INFO] YOLO-Pose chargé : '{candidate}'")
+                break
+            except Exception as e:
+                print(f"[WARN] Modèle pose '{candidate}' non disponible : {e}")
+        if self.pose_model is None:
+            print("[WARN] Aucun modèle pose disponible — détection posture désactivée")
 
     def process_frame(self, frame: np.ndarray, zone: str,
                       tracks: list, person_count: int) -> list:
@@ -326,7 +337,7 @@ class AnomalyDetector:
         state.entry_timestamps.append(time.time())
 
         # ── Inférence YOLO-Pose (avec skip) ──────────────────────────────
-        if self.frame_idx % self.frame_skip == 0:
+        if self.pose_model and self.frame_idx % self.frame_skip == 0:
             results = self.pose_model(frame, verbose=False, classes=[0])
             pose_data = []
             if results and results[0].keypoints is not None:
