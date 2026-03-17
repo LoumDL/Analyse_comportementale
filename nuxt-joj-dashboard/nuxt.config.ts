@@ -1,8 +1,10 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
+  ssr: false,
+
   nitro: {
-    preset: process.env.VERCEL ? 'vercel' : undefined,
+    preset: 'static',
   },
 
   modules: [
